@@ -1,69 +1,36 @@
-# 💰 SmartPay — Smart Payment Intelligence & Offline Settlement System
+# Divya Pandey
 
-A Spring Boot backend that combines **payment intelligence** with **secure offline payment settlement**, built as an MCA minor project.
+MCA student learning backend development with Java and Spring Boot.
+Currently building my first serious project — a payment intelligence
+system that solves a real problem in Indian digital payments.
 
-## 🎯 Problem Statement
+### What I'm working on
 
-Digital payments in India (especially UPI) have become ubiquitous, yet:
+**[SmartPay](https://github.com/divyaapandey26/smartpay)** — A Spring Boot
+backend that:
+- Compares UPI, Cash, and Split payments based on RBI's current MDR rules
+- Detects when users are overcharged
+- Generates AES-encrypted tokens for offline payments
+- Prevents double-spending with idempotent settlement
 
-1. Users are confused by **RBI's MDR rules** (0.4% on UPI transactions above ₹2000, capped at ₹300)
-2. **Overcharging** goes unnoticed — users don't know what fee is fair
-3. **Offline payments** aren't possible when there's no internet
+This is my minor project for Semester 3. I built it from scratch — designing
+the APIs, writing the business logic, and handling edge cases like
+concurrent token submission.
 
-SmartPay solves all three.
+### Currently learning
 
-## ✨ Features
+- Spring Boot (REST APIs, JPA, dependency injection)
+- Java fundamentals — collections, exceptions, generics
+- SQL and database design
+- Git and version control
 
-### 🧠 Payment Intelligence Engine
-Compares **UPI vs Cash vs Split** based on current RBI MDR rules and recommends the cheapest option for any transaction amount.
+Next: microservices, Docker, and Apache Kafka.
 
-### ⚠️ Overcharge Detection
-Automatically flags transactions where the user was charged more than the expected fee. All alerts are logged and displayed on the dashboard.
+### Tech I use
 
-### 🔐 Encrypted Offline Payment Tokens
-Generates **AES-encrypted tokens** that represent a payment. These tokens can be transferred to a merchant offline (via SMS, Bluetooth, etc.) and settled later when internet is available.
+Java · Spring Boot · Spring Data JPA · Thymeleaf · PostgreSQL · Maven · Git
 
-### 🛡️ Double-Spend Prevention
-Uses **idempotent token validation** to ensure the same token can never be settled twice — a critical requirement for any offline payment system.
 
-## 🛠️ Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Language | Java 17 |
-| Framework | Spring Boot 4.x |
-| Persistence | Spring Data JPA |
-| Database | H2 (dev) |
-| Templating | Thymeleaf |
-| Styling | Bootstrap 5 |
-| Build | Maven |
-
-## 🚀 API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/users` | List all users |
-| POST | `/api/users` | Create a user |
-| GET | `/api/users/{id}` | Get a user by ID |
-| GET | `/api/compare?amount={amount}` | Compare payment methods |
-| POST | `/api/compare/check-overcharge` | Detect overcharges |
-| POST | `/api/token/generate` | Generate an encrypted offline token |
-| POST | `/api/token/settle` | Settle a token (transfer money) |
-
-## 🖥️ Web Interface
-
-| URL | Page |
-|---|---|
-| `/` | Dashboard with users, balances, and alerts |
-| `/compare` | Payment method comparison form |
-| `/token` | Generate and settle offline tokens |
-
-## 🏃 How to Run
-
-```bash
-# Clone the repository
-git clone https://github.com/divyaapandey26/smartpay.git
-cd smartpay
-
-# Run with Maven wrapper
-./mvnw spring-boot:run
+- GitHub: [@divyaapandey26](https://github.com/divyaapandey26)
+- Email: your-email@example.com
