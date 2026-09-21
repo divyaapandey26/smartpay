@@ -18,10 +18,21 @@ public class HomeController {
     @Autowired
     private AlertRepository alertRepository;
 
+    @Autowired
+    private ProcessedTokenRepository processedTokenRepository;
+
+    @Autowired
+    private UPIAppRepository upiAppRepository;
+
+    @Autowired
+    private OfferRepository offerRepository;
+
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("users", userRepository.findAll());
         model.addAttribute("alerts", alertRepository.findAll());
+        model.addAttribute("apps", upiAppRepository.findAll());
+        model.addAttribute("offers", offerRepository.findAll());
         return "index";
     }
 
@@ -37,5 +48,17 @@ public class HomeController {
     @GetMapping("/token")
     public String tokenPage() {
         return "token";
+    }
+
+    @GetMapping("/compare-apps")
+    public String compareAppsPage() {
+        return "compare-apps";
+    }
+
+    @GetMapping("/history")
+    public String historyPage(Model model) {
+        model.addAttribute("tokens", processedTokenRepository.findAll());
+        model.addAttribute("users", userRepository.findAll());
+        return "history";
     }
 }

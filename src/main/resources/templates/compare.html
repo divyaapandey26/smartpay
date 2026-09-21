@@ -11,8 +11,10 @@
         <a class="navbar-brand" href="/">💰 SmartPay</a>
         <div>
             <a href="/" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
-            <a href="/compare" class="btn btn-outline-light btn-sm me-2">Compare</a>
-            <a href="/token" class="btn btn-outline-light btn-sm">Tokens</a>
+            <a href="/compare" class="btn btn-outline-light btn-sm me-2">Fee Compare</a>
+            <a href="/compare-apps" class="btn btn-outline-light btn-sm me-2">App Compare</a>
+            <a href="/token" class="btn btn-outline-light btn-sm me-2">Tokens</a>
+            <a href="/history" class="btn btn-outline-light btn-sm">History</a>
         </div>
     </div>
 </nav>
@@ -27,7 +29,8 @@
                     <div class="col-md-8">
                         <label class="form-label">Amount (₹)</label>
                         <input type="number" name="amount" class="form-control"
-                               th:value="${amount}" placeholder="Enter amount" required>
+                               th:value="${amount}" placeholder="Enter amount"
+                               step="any" min="0" autocomplete="off" required>
                     </div>
                     <div class="col-md-4">
                         <button type="submit" class="btn btn-primary w-100">Compare</button>

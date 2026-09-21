@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Compare UPI Apps</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">💰 SmartPay</a>
+        <div>
+            <a href="/" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
+            <a href="/compare" class="btn btn-outline-light btn-sm me-2">Fee Compare</a>
+            <a href="/compare-apps" class="btn btn-outline-light btn-sm me-2">App Compare</a>
+            <a href="/token" class="btn btn-outline-light btn-sm me-2">Tokens</a>
+            <a href="/history" class="btn btn-outline-light btn-sm">History</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2 class="mb-3">Compare UPI Apps</h2>
+    <p class="text-muted">Find which UPI app gives you the best cashback for your transaction.</p>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label">Merchant</label>
+                    <select id="merchant" class="form-control">
+                        <option value="BigBasket">BigBasket</option>
+                        <option value="Swiggy">Swiggy</option>
+                        <option value="Zomato">Zomato</option>
+                        <option value="Amazon">Amazon</option>
+                        <option value="Flipkart">Flipkart</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">Amount (₹)</label>
+                    <input type="number" id="amount" class="form-control"
+                           value="1000" min="0" step="any" autocomplete="off">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" onclick="compareApps()">Compare</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="results"></div>
+</div>
+
+<script>
+    async function compareApps() {
+        const merchant = document.getElementById('merchant').value;
+        const amount = document.getElementById('amount').value.trim();
+
+        if (!amount || isNaN(amount)) {
+            alert('Please enter a valid amount');
+            return;
+        }
+
+        const res = await fetch('/api/compare-apps?merchant=' + encodeURIComponent(merchant) + '&amount=' + amount);
+        const data = await res.json();
+
+        let html = '<div class="alert alert-success">';
+        html += '<strong>Best App:</strong> ' + data.bestApp;
+        html += ' &nbsp;|&nbsp; <strong>Effective Price:</strong> ₹' + data.bestEffectivePrice;
+        html += ' &nbsp;|&nbsp; <strong>You Save:</strong> ₹' + data.savings;
+        html += '</div>';
+
+        html += '<div class="card"><div class="card-body">';
+        html += '<table class="table table-striped mb-0">';
+        html += '<thead><tr><th>App</th><th>Provider</th><th>Offer</th><th class="text-end">Cashback</th><th class="text-end">Effective Price</th></tr></thead>';
+        html += '<tbody>';
+
+        data.results.forEach(r => {
+            const isBest = r.appName === data.bestApp;
+            html += '<tr' + (isBest ? ' class="table-success fw-bold"' : '') + '>';
+            html += '<td>' + r.appName + (isBest ? ' ⭐' : '') + '</td>';
+            html += '<td>' + r.provider + '</td>';
+            html += '<td>' + r.offerDetails + '</td>';
+            html += '<td class="text-end">₹' + r.cashback + '</td>';
+            html += '<td class="text-end">₹' + r.effectivePrice + '</td>';
+            html += '</tr>';
+        });
+
+        html += '</tbody></table></div></div>';
+        document.getElementById('results').innerHTML = html;
+    }
+</script>
+</body>
+</html>

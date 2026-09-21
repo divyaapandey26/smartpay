@@ -65,7 +65,7 @@ public class TokenService {
         userRepository.save(sender);
         userRepository.save(receiver);
 
-        tokenRepository.save(new ProcessedToken(uuid, senderId, amount));
+        tokenRepository.save(new ProcessedToken(uuid, senderId, receiverId, amount));
 
         Map<String, Object> result = new HashMap<>();
         result.put("status", "SUCCESS");
