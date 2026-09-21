@@ -1,41 +1,39 @@
-# SmartPay — Smart Payment Intelligence & Offline Settlement System
+# Divya Pandey
 
-A Spring Boot backend that combines payment intelligence with secure offline payment settlement.
+MCA student learning backend development with Java and Spring Boot.
+Currently building my first serious project — a payment intelligence
+system that solves a real problem in Indian digital payments.
 
-## Features
+### What I'm working on
 
-- **Payment Intelligence Engine** — Compares UPI, Cash, and Split payments based on RBI MDR rules (0.4% on UPI transactions above ₹2000, capped at ₹300) and recommends the cheapest option.
-- **Overcharge Detection** — Automatically flags cases where a user was charged more than expected.
-- **Encrypted Offline Tokens** — Generates AES-encrypted payment tokens that can be settled later, simulating offline UPI payments.
-- **Double-Spend Prevention** — Uses idempotent token validation to prevent the same token from being used more than once.
+**[SmartPay](https://github.com/divyaapandey26/smartpay)** — A Spring Boot
+backend that:
+- Compares UPI, Cash, and Split payments based on RBI's current MDR rules
+- Detects when users are overcharged
+- Generates AES-encrypted tokens for offline payments
+- Prevents double-spending with idempotent settlement
 
-## Tech Stack
+This is my minor project for Semester 3. I built it from scratch — designing
+the APIs, writing the business logic, and handling edge cases like
+concurrent token submission.
 
-- Java 17
-- Spring Boot 4.x
-- Spring Data JPA
-- H2 (in-memory database for development)
-- Maven
+### Currently learning
 
-## API Endpoints
+- Spring Boot (REST APIs, JPA, dependency injection)
+- Java fundamentals — collections, exceptions, generics
+- SQL and database design
+- Git and version control
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/users` | List all users |
-| POST | `/api/users` | Create a user |
-| GET | `/api/users/{id}` | Get user by ID |
-| GET | `/api/compare?amount={amount}` | Compare payment methods |
-| POST | `/api/compare/check-overcharge` | Check if a fee was overcharged |
-| POST | `/api/token/generate` | Generate an encrypted offline payment token |
-| POST | `/api/token/settle` | Settle a token (transfer funds) |
+Next: microservices, Docker, and Apache Kafka.
 
-## How to Run
+### Tech I use
 
-1. Clone the repo: `git clone https://github.com/divyaapandey26/smartpay.git`
-2. Open in IntelliJ
-3. Run `SmartPayApplication`
-4. Server starts on `http://localhost:8080`
+Java · Spring Boot · Spring Data JPA · Thymeleaf · PostgreSQL · Maven · Git
 
-## Author
+### Contact
 
-Divya Pandey — MCA Student
+Feel free to reach out if you're working on something similar or want to
+discuss backend development.
+
+- GitHub: [@divyaapandey26](https://github.com/divyaapandey26)
+- Email: divyapandey011026@gmail.com
