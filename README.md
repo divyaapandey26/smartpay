@@ -30,7 +30,10 @@ Next: microservices, Docker, and Apache Kafka.
 
 Java · Spring Boot · Spring Data JPA · Thymeleaf · PostgreSQL · Maven · Git
 
+### Contact
 
+Feel free to reach out if you're working on something similar or want to
+discuss backend development.
 
 - GitHub: [@divyaapandey26](https://github.com/divyaapandey26)
-- Email: your-email@example.com
+- Email: divyapandey011026@gmail.com
