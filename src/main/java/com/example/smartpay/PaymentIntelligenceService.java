@@ -1,5 +1,7 @@
 package com.example.smartpay;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -7,6 +9,8 @@ import java.util.Map;
 
 @Service
 public class PaymentIntelligenceService {
+    @Autowired
+    private AlertRepository alertRepository;
 
     public Map<String, Object> compare(double amount) {
         double upiFee;
@@ -62,6 +66,14 @@ public class PaymentIntelligenceService {
         result.put("message", overcharged
                 ? "OVERCHARGE DETECTED: You were charged " + extra + " extra"
                 : "Fee is correct.");
+
+        if (overcharged) {
+            Alert alert = new Alert(
+                    method, amount, expectedFee, feeCharged, extra,
+                    "OVERCHARGE DETECTED: You were charged " + extra + " extra"
+            );
+            alertRepository.save(alert);
+        }
 
         return result;
     }
