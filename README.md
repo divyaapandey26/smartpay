@@ -1,39 +1,36 @@
 # Divya Pandey
 
-MCA student learning backend development with Java and Spring Boot.
-Currently building my first serious project — a payment intelligence
-system that solves a real problem in Indian digital payments.
+MCA student focused on backend development with Java and Spring Boot.
+I build server-side applications and care about correctness — clean APIs,
+proper error handling, and predictable behavior under edge cases.
 
-### What I'm working on
+### Projects
 
 **[SmartPay](https://github.com/divyaapandey26/smartpay)** — A Spring Boot
-backend that:
-- Compares UPI, Cash, and Split payments based on RBI's current MDR rules
-- Detects when users are overcharged
-- Generates AES-encrypted tokens for offline payments
-- Prevents double-spending with idempotent settlement
+backend that solves three problems in Indian digital payments:
 
-This is my minor project for Semester 3. I built it from scratch — designing
-the APIs, writing the business logic, and handling edge cases like
-concurrent token submission.
+- Compares UPI, Cash, and Split against RBI's MDR rules
+- Detects overcharging and logs alerts
+- Generates AES-encrypted tokens for offline payment settlement
+- Prevents double-spending with idempotent token validation
 
-### Currently learning
+Built from scratch — API design, business logic, PostgreSQL schema, and
+edge case handling (concurrent token submission, invalid payloads,
+expired data). Minor project for Semester 3.
 
-- Spring Boot (REST APIs, JPA, dependency injection)
-- Java fundamentals — collections, exceptions, generics
-- SQL and database design
-- Git and version control
+### Skills
 
-Next: microservices, Docker, and Apache Kafka.
+- **Languages:** Java, SQL, JavaScript
+- **Backend:** Spring Boot, Spring Data JPA, REST APIs
+- **Databases:** PostgreSQL
+- **Templating:** Thymeleaf, Bootstrap
+- **Tools:** Maven, Git, IntelliJ IDEA, Postman
 
-### Tech I use
+### Currently exploring
 
-Java · Spring Boot · Spring Data JPA · Thymeleaf · PostgreSQL · Maven · Git
+Distributed systems — microservices, Apache Kafka, and Docker.
 
 ### Contact
-
-Feel free to reach out if you're working on something similar or want to
-discuss backend development.
 
 - GitHub: [@divyaapandey26](https://github.com/divyaapandey26)
 - Email: divyapandey011026@gmail.com
