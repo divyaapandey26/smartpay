@@ -119,9 +119,10 @@
                 <tr>
                     <th>Method</th>
                     <th class="text-end">Amount</th>
-                    <th class="text-end">Expected</th>
-                    <th class="text-end">Charged</th>
                     <th class="text-end">Extra</th>
+                    <th class="text-center">Anomaly Score</th>
+                    <th class="text-center">Severity</th>
+                    <th class="text-center">Deviation</th>
                     <th>Why Flagged</th>
                 </tr>
                 </thead>
@@ -129,9 +130,18 @@
                 <tr th:each="alert : ${alerts}">
                     <td th:text="${alert.method}">UPI</td>
                     <td class="text-end" th:text="${alert.amount}">0</td>
-                    <td class="text-end" th:text="${alert.expectedFee}">0</td>
-                    <td class="text-end" th:text="${alert.feeCharged}">0</td>
                     <td class="text-end text-danger fw-bold" th:text="${alert.extraCharged}">0</td>
+                    <td class="text-center">
+                        <span class="fw-bold" th:text="${alert.anomalyScore} + '%'">0%</span>
+                    </td>
+                    <td class="text-center">
+                                <span class="badge"
+                                      th:classappend="${alert.severity == 'HIGH' ? 'bg-danger' : (alert.severity == 'MEDIUM' ? 'bg-warning' : 'bg-secondary')}"
+                                      th:text="${alert.severity}">LOW</span>
+                    </td>
+                    <td class="text-center">
+                        <small th:text="${alert.deviation}">N/A</small>
+                    </td>
                     <td>
                         <ul class="mb-0 ps-3">
                             <li th:each="reason : ${#strings.arraySplit(alert.reasons, '|')}"

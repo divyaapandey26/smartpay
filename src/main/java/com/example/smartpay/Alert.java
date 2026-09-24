@@ -21,6 +21,10 @@ public class Alert {
     @Column(length = 1000)
     private String reasons;
 
+    private int anomalyScore;
+    private String severity;
+    private String deviation;
+
     private LocalDateTime createdAt;
 
     public Alert() {}
@@ -33,6 +37,9 @@ public class Alert {
         this.extraCharged = extraCharged;
         this.message = message;
         this.reasons = "";
+        this.anomalyScore = 0;
+        this.severity = "LOW";
+        this.deviation = "N/A";
         this.createdAt = LocalDateTime.now();
     }
 
@@ -45,5 +52,11 @@ public class Alert {
     public String getMessage() { return message; }
     public String getReasons() { return reasons; }
     public void setReasons(String reasons) { this.reasons = reasons; }
+    public int getAnomalyScore() { return anomalyScore; }
+    public void setAnomalyScore(int anomalyScore) { this.anomalyScore = anomalyScore; }
+    public String getSeverity() { return severity; }
+    public void setSeverity(String severity) { this.severity = severity; }
+    public String getDeviation() { return deviation; }
+    public void setDeviation(String deviation) { this.deviation = deviation; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

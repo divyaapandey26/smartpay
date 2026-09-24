@@ -14,6 +14,9 @@ public class PaymentIntelligenceService {
     @Autowired
     private AlertRepository alertRepository;
 
+    @Autowired
+    private AnomalyDetectorService anomalyDetector;
+
     public Map<String, Object> compare(double amount) {
         double upiFee;
         if (amount <= 2000) {
@@ -27,13 +30,9 @@ public class PaymentIntelligenceService {
 
         double lowest = Math.min(upiFee, Math.min(cashFee, splitFee));
         String recommended;
-        if (lowest == upiFee) {
-            recommended = "UPI";
-        } else if (lowest == cashFee) {
-            recommended = "Cash";
-        } else {
-            recommended = "Split";
-        }
+        if (lowest == upiFee) recommended = "UPI";
+        else if (lowest == cashFee) recommended = "Cash";
+        else recommended = "Split";
 
         Map<String, Object> result = new HashMap<>();
         result.put("amount", amount);
@@ -57,7 +56,6 @@ public class PaymentIntelligenceService {
         double extra = feeCharged - expectedFee;
         boolean overcharged = extra > 0.01;
 
-        // Generate reasons for the anomaly
         List<String> reasons = new ArrayList<>();
         if (overcharged) {
             if (expectedFee == 0 && feeCharged > 0) {
@@ -72,18 +70,18 @@ public class PaymentIntelligenceService {
             }
 
             if (extra > 10) {
-                reasons.add("Extra charge exceeds ₹10 threshold — significant overcharge");
+                reasons.add("Extra charge exceeds Rs 10 threshold - significant overcharge");
             }
 
             if (amount > 2000) {
-                reasons.add("Transaction amount is above the ₹2000 MDR threshold");
+                reasons.add("Transaction amount is above the Rs 2000 MDR threshold");
             }
 
             long previousSameMethod = alertRepository.findAll().stream()
                     .filter(a -> a.getMethod().equalsIgnoreCase(method))
                     .count();
             if (previousSameMethod >= 2) {
-                reasons.add("This payment method has triggered " + previousSameMethod + " previous alerts — recurring pattern");
+                reasons.add("This payment method has triggered " + previousSameMethod + " previous alerts - recurring pattern");
             }
         }
 
@@ -100,10 +98,19 @@ public class PaymentIntelligenceService {
                 : "Fee is correct.");
 
         if (overcharged) {
+            Map<String, Object> anomaly = anomalyDetector.analyze(extra, method);
+
             Alert alert = new Alert(method, amount, expectedFee, feeCharged, extra,
                     "OVERCHARGE DETECTED: You were charged " + extra + " extra");
             alert.setReasons(String.join("|", reasons));
+            alert.setAnomalyScore(((Number) anomaly.get("score")).intValue());
+            alert.setSeverity((String) anomaly.get("severity"));
+            alert.setDeviation((String) anomaly.get("deviation"));
             alertRepository.save(alert);
+
+            result.put("anomalyScore", anomaly.get("score"));
+            result.put("severity", anomaly.get("severity"));
+            result.put("deviation", anomaly.get("deviation"));
         }
 
         return result;
