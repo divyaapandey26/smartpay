@@ -17,6 +17,7 @@ public class HomeController {
     @Autowired private ProcessedTokenRepository processedTokenRepository;
     @Autowired private UPIAppRepository upiAppRepository;
     @Autowired private OfferRepository offerRepository;
+    @Autowired private OfflineQueueService offlineQueueService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -29,7 +30,6 @@ public class HomeController {
         model.addAttribute("apps", upiAppRepository.findAll());
         model.addAttribute("offers", offerRepository.findAll());
 
-        // Dashboard metrics
         long totalSettlements = tokens.size();
         double totalSettledAmount = tokens.stream().mapToDouble(ProcessedToken::getAmount).sum();
         long totalAlerts = alerts.size();
@@ -67,5 +67,11 @@ public class HomeController {
         model.addAttribute("tokens", processedTokenRepository.findAll());
         model.addAttribute("users", userRepository.findAll());
         return "history";
+    }
+
+    @GetMapping("/offline-queue")
+    public String offlineQueuePage(Model model) {
+        model.addAttribute("queue", offlineQueueService.getAll());
+        return "offline-queue";
     }
 }

@@ -14,7 +14,8 @@
             <a href="/compare" class="btn btn-outline-light btn-sm me-2">Fee Compare</a>
             <a href="/compare-apps" class="btn btn-outline-light btn-sm me-2">App Compare</a>
             <a href="/token" class="btn btn-outline-light btn-sm me-2">Tokens</a>
-            <a href="/history" class="btn btn-outline-light btn-sm">History</a>
+            <a href="/history" class="btn btn-outline-light btn-sm me-2">History</a>
+            <a href="/offline-queue" class="btn btn-outline-light btn-sm">Offline</a>
         </div>
     </div>
 </nav>
@@ -41,16 +42,9 @@
                 </thead>
                 <tbody>
                 <tr th:each="t : ${tokens}">
-                    <td>
-                        <small class="text-muted"
-                               th:text="${#strings.substring(t.tokenId, 0, 8)} + '...'">token</small>
-                    </td>
-                    <td>
-                        <span th:each="u : ${users}" th:if="${u.id == t.senderId}" th:text="${u.name}">Sender</span>
-                    </td>
-                    <td>
-                        <span th:each="u : ${users}" th:if="${u.id == t.receiverId}" th:text="${u.name}">Receiver</span>
-                    </td>
+                    <td><small class="text-muted" th:text="${#strings.substring(t.tokenId, 0, 8)} + '...'">token</small></td>
+                    <td><span th:each="u : ${users}" th:if="${u.id == t.senderId}" th:text="${u.name}">Sender</span></td>
+                    <td><span th:each="u : ${users}" th:if="${u.id == t.receiverId}" th:text="${u.name}">Receiver</span></td>
                     <td class="text-end fw-bold" th:text="${t.amount}">0</td>
                     <td th:text="${#temporals.format(t.processedAt, 'dd MMM yyyy, HH:mm')}">date</td>
                 </tr>

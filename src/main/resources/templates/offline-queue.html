@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Offline Transaction Queue</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">💰 SmartPay</a>
+        <div>
+            <a href="/" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
+            <a href="/compare" class="btn btn-outline-light btn-sm me-2">Fee Compare</a>
+            <a href="/compare-apps" class="btn btn-outline-light btn-sm me-2">App Compare</a>
+            <a href="/token" class="btn btn-outline-light btn-sm me-2">Tokens</a>
+            <a href="/history" class="btn btn-outline-light btn-sm me-2">History</a>
+            <a href="/offline-queue" class="btn btn-outline-light btn-sm">Offline</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2 class="mb-3">📴 Offline Transaction Queue</h2>
+    <p class="text-muted">
+        Simulates offline payments. Transactions are queued locally and settled in a batch when the network is restored.
+    </p>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card mb-4">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">Simulate Offline Transaction</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Sender ID</label>
+                        <input type="number" id="senderId" class="form-control" value="1" min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Receiver ID</label>
+                        <input type="number" id="receiverId" class="form-control" value="2" min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Amount (₹)</label>
+                        <input type="number" id="amount" class="form-control" value="500" min="0" step="any">
+                    </div>
+                    <button class="btn btn-warning w-100" onclick="enqueue()">
+                        📴 Add to Offline Queue
+                    </button>
+                    <div id="enqueueResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Queue Status</h5>
+                    <div>
+                        <button class="btn btn-sm btn-success" onclick="syncQueue()">📶 Sync Queue</button>
+                        <button class="btn btn-sm btn-outline-light" onclick="clearQueue()">🗑 Clear</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="queueDisplay"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function loadQueue() {
+        const res = await fetch('/api/offline/queue');
+        const data = await res.json();
+        renderQueue(data);
+    }
+
+    function renderQueue(items) {
+        const div = document.getElementById('queueDisplay');
+        if (items.length === 0) {
+            div.innerHTML = '<p class="text-muted mb-0">Queue is empty. Add transactions on the left.</p>';
+            return;
+        }
+        let html = '<table class="table table-sm"><thead><tr><th>Client TX ID</th><th>From→To</th><th class="text-end">Amount</th><th>Status</th><th>Note</th></tr></thead><tbody>';
+        items.forEach(tx => {
+            const statusClass = tx.status === 'SETTLED' ? 'success' : tx.status === 'PENDING' ? 'warning' : tx.status === 'DUPLICATE' ? 'info' : 'danger';
+            html += '<tr>';
+            html += '<td><small>' + tx.clientTxId.substring(0, 8) + '...</small></td>';
+            html += '<td>User ' + tx.senderId + ' → ' + tx.receiverId + '</td>';
+            html += '<td class="text-end">₹' + tx.amount + '</td>';
+            html += '<td><span class="badge bg-' + statusClass + '">' + tx.status + '</span></td>';
+            html += '<td><small class="text-muted">' + (tx.note || '-') + '</small></td>';
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+        div.innerHTML = html;
+    }
+
+    async function enqueue() {
+        const senderId = document.getElementById('senderId').value;
+        const receiverId = document.getElementById('receiverId').value;
+        const amount = document.getElementById('amount').value;
+
+        await fetch('/api/offline/enqueue', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ senderId, receiverId, amount })
+        });
+
+        document.getElementById('enqueueResult').innerHTML =
+            '<div class="alert alert-success py-2 mb-0"><small>✓ Added to offline queue</small></div>';
+        loadQueue();
+    }
+
+    async function syncQueue() {
+        const res = await fetch('/api/offline/sync', { method: 'POST' });
+        const data = await res.json();
+        document.getElementById('enqueueResult').innerHTML =
+            '<div class="alert alert-primary py-2 mb-0"><small><strong>Sync complete:</strong> '
+            + data.settled + ' settled, ' + data.failed + ' failed of ' + data.totalProcessed + ' processed</small></div>';
+        loadQueue();
+    }
+
+    async function clearQueue() {
+        if (!confirm('Clear the entire queue?')) return;
+        await fetch('/api/offline/clear', { method: 'POST' });
+        document.getElementById('enqueueResult').innerHTML = '';
+        loadQueue();
+    }
+
+    loadQueue();
+</script>
+</body>
+</html>

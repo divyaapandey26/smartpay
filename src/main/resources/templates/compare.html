@@ -14,7 +14,8 @@
             <a href="/compare" class="btn btn-outline-light btn-sm me-2">Fee Compare</a>
             <a href="/compare-apps" class="btn btn-outline-light btn-sm me-2">App Compare</a>
             <a href="/token" class="btn btn-outline-light btn-sm me-2">Tokens</a>
-            <a href="/history" class="btn btn-outline-light btn-sm">History</a>
+            <a href="/history" class="btn btn-outline-light btn-sm me-2">History</a>
+            <a href="/offline-queue" class="btn btn-outline-light btn-sm">Offline</a>
         </div>
     </div>
 </nav>
@@ -53,18 +54,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>UPI</td>
-                    <td class="text-end" th:text="${result.upiFee}">0</td>
-                </tr>
-                <tr>
-                    <td>Cash</td>
-                    <td class="text-end" th:text="${result.cashFee}">0</td>
-                </tr>
-                <tr>
-                    <td>Split</td>
-                    <td class="text-end" th:text="${result.splitFee}">0</td>
-                </tr>
+                <tr><td>UPI</td><td class="text-end" th:text="${result.upiFee}">0</td></tr>
+                <tr><td>Cash</td><td class="text-end" th:text="${result.cashFee}">0</td></tr>
+                <tr><td>Split</td><td class="text-end" th:text="${result.splitFee}">0</td></tr>
                 </tbody>
             </table>
 
