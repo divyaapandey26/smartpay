@@ -21,6 +21,43 @@
 </nav>
 
 <div class="container mt-4">
+    <h2 class="mb-3">Dashboard Metrics</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h6 class="card-title">Total Settlements</h6>
+                    <h3 class="mb-0" th:text="${totalSettlements}">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h6 class="card-title">Total Settled Amount</h6>
+                    <h3 class="mb-0">₹<span th:text="${totalSettledAmount}">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h6 class="card-title">Alerts Triggered</h6>
+                    <h3 class="mb-0" th:text="${totalAlerts}">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h6 class="card-title">Amount Flagged</h6>
+                    <h3 class="mb-0">₹<span th:text="${amountFlagged}">0</span></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h2 class="mb-3">Users &amp; Balances</h2>
 
     <div class="card mb-4">
@@ -54,9 +91,6 @@
                 </div>
                 <div class="card-body">
                     <canvas id="alertsChart" height="200"></canvas>
-                    <p th:if="${alerts == null or alerts.isEmpty()}" class="text-muted text-center mt-3 mb-0">
-                        No alerts yet.
-                    </p>
                 </div>
             </div>
         </div>
@@ -84,9 +118,10 @@
                 <tr>
                     <th>Method</th>
                     <th class="text-end">Amount</th>
-                    <th class="text-end">Expected Fee</th>
+                    <th class="text-end">Expected</th>
                     <th class="text-end">Charged</th>
                     <th class="text-end">Extra</th>
+                    <th>Why Flagged</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -96,6 +131,14 @@
                     <td class="text-end" th:text="${alert.expectedFee}">0</td>
                     <td class="text-end" th:text="${alert.feeCharged}">0</td>
                     <td class="text-end text-danger fw-bold" th:text="${alert.extraCharged}">0</td>
+                    <td>
+                        <ul class="mb-0 ps-3">
+                            <li th:each="reason : ${#strings.arraySplit(alert.reasons, '|')}"
+                                th:text="${reason}" style="font-size: 0.85rem;">
+                                reason
+                            </li>
+                        </ul>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -104,17 +147,12 @@
 </div>
 
 <script th:inline="javascript">
-    // Prepare data from Thymeleaf
     const alerts = /*[[${alerts}]]*/ [];
     const apps = /*[[${apps}]]*/ [];
     const offers = /*[[${offers}]]*/ [];
 
-    // ============ Chart 1: Alerts by Method (Pie) ============
     const methodCounts = {};
-    alerts.forEach(a => {
-        methodCounts[a.method] = (methodCounts[a.method] || 0) + 1;
-    });
-
+    alerts.forEach(a => { methodCounts[a.method] = (methodCounts[a.method] || 0) + 1; });
     const alertLabels = Object.keys(methodCounts);
     const alertData = Object.values(methodCounts);
 
@@ -129,15 +167,10 @@
                 }]
             }
         });
-    } else {
-        document.getElementById('alertsChart').style.display = 'none';
     }
 
-    // ============ Chart 2: Offers per UPI App (Bar) ============
     const appOffers = {};
-    apps.forEach(app => {
-        appOffers[app.name] = 0;
-    });
+    apps.forEach(app => { appOffers[app.name] = 0; });
     offers.forEach(o => {
         const app = apps.find(a => a.id === o.appId);
         if (app) appOffers[app.name] = (appOffers[app.name] || 0) + 1;
@@ -154,15 +187,8 @@
             }]
         },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 }
-                }
-            },
-            plugins: {
-                legend: { display: false }
-            }
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+            plugins: { legend: { display: false } }
         }
     });
 </script>

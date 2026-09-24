@@ -17,6 +17,10 @@ public class Alert {
     private double feeCharged;
     private double extraCharged;
     private String message;
+
+    @Column(length = 1000)
+    private String reasons;
+
     private LocalDateTime createdAt;
 
     public Alert() {}
@@ -28,6 +32,7 @@ public class Alert {
         this.feeCharged = feeCharged;
         this.extraCharged = extraCharged;
         this.message = message;
+        this.reasons = "";
         this.createdAt = LocalDateTime.now();
     }
 
@@ -38,5 +43,7 @@ public class Alert {
     public double getFeeCharged() { return feeCharged; }
     public double getExtraCharged() { return extraCharged; }
     public String getMessage() { return message; }
+    public String getReasons() { return reasons; }
+    public void setReasons(String reasons) { this.reasons = reasons; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 }
