@@ -74,4 +74,9 @@ public class HomeController {
         model.addAttribute("queue", offlineQueueService.getAll());
         return "offline-queue";
     }
+
+    @GetMapping("/optimizer")
+    public String optimizerPage() {
+        return "optimizer";
+    }
 }

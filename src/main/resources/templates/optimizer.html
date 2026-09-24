@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Settlement Cost Optimizer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">💰 SmartPay</a>
+        <div>
+            <a href="/" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
+            <a href="/compare" class="btn btn-outline-light btn-sm me-2">Fee Compare</a>
+            <a href="/compare-apps" class="btn btn-outline-light btn-sm me-2">App Compare</a>
+            <a href="/token" class="btn btn-outline-light btn-sm me-2">Tokens</a>
+            <a href="/history" class="btn btn-outline-light btn-sm me-2">History</a>
+            <a href="/offline-queue" class="btn btn-outline-light btn-sm me-2">Offline</a>
+            <a href="/optimizer" class="btn btn-outline-light btn-sm">Optimizer</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2 class="mb-3">🎯 Settlement Cost Optimizer</h2>
+    <p class="text-muted">
+        Given a batch of transactions, find the cheapest settlement strategy by balancing fees, processing time, and risk.
+    </p>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Total Amount (₹)</label>
+                    <input type="number" id="amount" class="form-control" value="50000" min="1" step="any">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Number of Transactions</label>
+                    <input type="number" id="count" class="form-control" value="100" min="1" step="1">
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary w-100" onclick="optimize()">Find Optimal Strategy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="results"></div>
+</div>
+
+<script>
+    async function optimize() {
+        const amount = document.getElementById('amount').value;
+        const count = document.getElementById('count').value;
+
+        if (!amount || !count) {
+            alert('Please enter amount and transaction count');
+            return;
+        }
+
+        const res = await fetch('/api/optimizer/optimize?amount=' + amount + '&count=' + count);
+        const data = await res.json();
+
+        let html = '<div class="alert alert-success">';
+        html += '<h5 class="mb-1">🏆 Recommended: <strong>' + data.recommended + '</strong></h5>';
+        html += '<div>Total Fee: <strong>₹' + data.recommendedFee + '</strong>';
+        html += ' &nbsp;|&nbsp; You save: <strong>₹' + data.savings + '</strong> vs the most expensive strategy</div>';
+        html += '</div>';
+
+        html += '<div class="row">';
+        data.strategies.forEach(s => {
+            const isBest = s.name === data.recommended;
+            const cardClass = isBest ? 'border-success shadow' : '';
+            html += '<div class="col-md-4 mb-4"><div class="card h-100 ' + cardClass + '">';
+            html += '<div class="card-header ' + (isBest ? 'bg-success text-white' : '') + '">';
+            html += '<h6 class="mb-0">' + s.name + (isBest ? ' ⭐' : '') + '</h6>';
+            html += '</div>';
+            html += '<div class="card-body">';
+            html += '<p class="text-muted small">' + s.description + '</p>';
+            html += '<table class="table table-sm mb-0">';
+            html += '<tr><td>Total Fee</td><td class="text-end fw-bold">₹' + s.totalFee + '</td></tr>';
+            html += '<tr><td>Fee / TX</td><td class="text-end">₹' + s.feePerTransaction + '</td></tr>';
+            html += '<tr><td>API Calls</td><td class="text-end">' + s.apiCalls + '</td></tr>';
+            html += '<tr><td>Processing</td><td class="text-end">' + s.processingSeconds + 's</td></tr>';
+            html += '<tr><td>Risk</td><td class="text-end">' + s.risk + '</td></tr>';
+            html += '<tr class="table-active"><td><strong>Composite Score</strong></td><td class="text-end"><strong>' + s.compositeScore + '</strong></td></tr>';
+            html += '</table>';
+            html += '</div></div></div>';
+        });
+        html += '</div>';
+        document.getElementById('results').innerHTML = html;
+    }
+</script>
+</body>
+</html>
