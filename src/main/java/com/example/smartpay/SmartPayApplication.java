@@ -4,6 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 
@@ -15,14 +17,22 @@ public class SmartPayApplication {
 	}
 
 	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
 	public CommandLineRunner demo(UserRepository userRepository,
 	                              UPIAppRepository appRepository,
-	                              OfferRepository offerRepository) {
+	                              OfferRepository offerRepository,
+	                              PasswordEncoder passwordEncoder) {
 		return (args) -> {
-			// Seed users
+			// Seed users with hashed passwords
 			if (userRepository.count() == 0) {
-				userRepository.save(new User("Shweta", 5000.0));
-				userRepository.save(new User("Divya", 2500.0));
+				userRepository.save(new User("Shweta", "shweta",
+						passwordEncoder.encode("shweta123"), 5000.0, "ROLE_USER"));
+				userRepository.save(new User("Divya", "divya",
+						passwordEncoder.encode("divya123"), 2500.0, "ROLE_ADMIN"));
 			}
 
 			// Seed UPI apps
@@ -38,17 +48,14 @@ public class SmartPayApplication {
 				LocalDate today = LocalDate.now();
 				LocalDate nextMonth = today.plusDays(30);
 
-				// GPay offers
 				offerRepository.save(new Offer(1L, "BigBasket", 5.0, 50.0, 500.0, today, nextMonth, true));
 				offerRepository.save(new Offer(1L, "Swiggy", 10.0, 75.0, 200.0, today, nextMonth, true));
 				offerRepository.save(new Offer(1L, "Amazon", 3.0, 100.0, 1000.0, today, nextMonth, true));
 
-				// PhonePe offers
 				offerRepository.save(new Offer(2L, "BigBasket", 8.0, 80.0, 500.0, today, nextMonth, true));
 				offerRepository.save(new Offer(2L, "Swiggy", 5.0, 50.0, 300.0, today, nextMonth, true));
 				offerRepository.save(new Offer(2L, "Flipkart", 6.0, 90.0, 800.0, today, nextMonth, true));
 
-				// Paytm offers
 				offerRepository.save(new Offer(3L, "BigBasket", 3.0, 30.0, 300.0, today, nextMonth, true));
 				offerRepository.save(new Offer(3L, "Amazon", 7.0, 150.0, 1500.0, today, nextMonth, true));
 				offerRepository.save(new Offer(3L, "Zomato", 12.0, 100.0, 400.0, today, nextMonth, true));

@@ -1,28 +1,39 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Settlement Cost Optimizer</title>
+    <title>SmartPay — Optimizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/styles.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-<nav class="navbar navbar-dark bg-primary">
+<body>
+<nav class="navbar navbar-dark navbar-sp">
     <div class="container">
         <a class="navbar-brand" href="/">💰 SmartPay</a>
-        <div>
-            <a href="/" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
-            <a href="/compare" class="btn btn-outline-light btn-sm me-2">Fee Compare</a>
-            <a href="/compare-apps" class="btn btn-outline-light btn-sm me-2">App Compare</a>
-            <a href="/token" class="btn btn-outline-light btn-sm me-2">Tokens</a>
-            <a href="/history" class="btn btn-outline-light btn-sm me-2">History</a>
-            <a href="/offline-queue" class="btn btn-outline-light btn-sm me-2">Offline</a>
-            <a href="/optimizer" class="btn btn-outline-light btn-sm">Optimizer</a>
+        <div class="d-flex align-items-center">
+            <a href="/" class="btn btn-nav me-2">Dashboard</a>
+            <a href="/compare" class="btn btn-nav me-2">Fee Compare</a>
+            <a href="/compare-apps" class="btn btn-nav me-2">App Compare</a>
+            <a href="/token" class="btn btn-nav me-2">Tokens</a>
+            <a href="/history" class="btn btn-nav me-2">History</a>
+            <a href="/offline-queue" class="btn btn-nav me-2">Offline</a>
+            <a href="/optimizer" class="btn btn-nav me-3">Optimizer</a>
+            <span class="text-white me-2" style="font-size: 0.85rem;">
+                    Hi, <strong sec:authentication="name">user</strong>
+                </span>
+            <form method="post" action="/logout" class="d-inline">
+                <button type="submit" class="btn btn-nav">Logout</button>
+            </form>
         </div>
     </div>
 </nav>
 
 <div class="container mt-4">
-    <h2 class="mb-3">🎯 Settlement Cost Optimizer</h2>
+    <h2 class="mb-3">Settlement Cost Optimizer</h2>
     <p class="text-muted">
         Given a batch of transactions, find the cheapest settlement strategy by balancing fees, processing time, and risk.
     </p>
@@ -62,9 +73,9 @@
         const data = await res.json();
 
         let html = '<div class="alert alert-success">';
-        html += '<h5 class="mb-1">🏆 Recommended: <strong>' + data.recommended + '</strong></h5>';
-        html += '<div>Total Fee: <strong>₹' + data.recommendedFee + '</strong>';
-        html += ' &nbsp;|&nbsp; You save: <strong>₹' + data.savings + '</strong> vs the most expensive strategy</div>';
+        html += '<strong>Recommended:</strong> ' + data.recommended;
+        html += ' &nbsp;|&nbsp; <strong>Total Fee:</strong> ₹' + data.recommendedFee;
+        html += ' &nbsp;|&nbsp; <strong>You save:</strong> ₹' + data.savings + ' vs the most expensive strategy';
         html += '</div>';
 
         html += '<div class="row">';
@@ -73,7 +84,7 @@
             const cardClass = isBest ? 'border-success shadow' : '';
             html += '<div class="col-md-4 mb-4"><div class="card h-100 ' + cardClass + '">';
             html += '<div class="card-header ' + (isBest ? 'bg-success text-white' : '') + '">';
-            html += '<h6 class="mb-0">' + s.name + (isBest ? ' ⭐' : '') + '</h6>';
+            html += '<h6 class="mb-0" style="font-size: 0.9rem;">' + s.name + (isBest ? ' ⭐' : '') + '</h6>';
             html += '</div>';
             html += '<div class="card-body">';
             html += '<p class="text-muted small">' + s.description + '</p>';
@@ -83,7 +94,7 @@
             html += '<tr><td>API Calls</td><td class="text-end">' + s.apiCalls + '</td></tr>';
             html += '<tr><td>Processing</td><td class="text-end">' + s.processingSeconds + 's</td></tr>';
             html += '<tr><td>Risk</td><td class="text-end">' + s.risk + '</td></tr>';
-            html += '<tr class="table-active"><td><strong>Composite Score</strong></td><td class="text-end"><strong>' + s.compositeScore + '</strong></td></tr>';
+            html += '<tr class="table-active"><td><strong>Score</strong></td><td class="text-end"><strong>' + s.compositeScore + '</strong></td></tr>';
             html += '</table>';
             html += '</div></div></div>';
         });

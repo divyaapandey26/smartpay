@@ -25,6 +25,11 @@ public class Alert {
     private String severity;
     private String deviation;
 
+    private boolean iqrOutlier;
+
+    @Column(length = 200)
+    private String iqrNote;
+
     private LocalDateTime createdAt;
 
     public Alert() {}
@@ -40,6 +45,8 @@ public class Alert {
         this.anomalyScore = 0;
         this.severity = "LOW";
         this.deviation = "N/A";
+        this.iqrOutlier = false;
+        this.iqrNote = "";
         this.createdAt = LocalDateTime.now();
     }
 
@@ -58,5 +65,9 @@ public class Alert {
     public void setSeverity(String severity) { this.severity = severity; }
     public String getDeviation() { return deviation; }
     public void setDeviation(String deviation) { this.deviation = deviation; }
+    public boolean isIqrOutlier() { return iqrOutlier; }
+    public void setIqrOutlier(boolean iqrOutlier) { this.iqrOutlier = iqrOutlier; }
+    public String getIqrNote() { return iqrNote; }
+    public void setIqrNote(String iqrNote) { this.iqrNote = iqrNote; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

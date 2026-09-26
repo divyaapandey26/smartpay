@@ -6,7 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class HomeController {
@@ -24,11 +26,11 @@ public class HomeController {
         List<User> users = userRepository.findAll();
         List<Alert> alerts = alertRepository.findAll();
         List<ProcessedToken> tokens = processedTokenRepository.findAll();
+        List<UPIApp> apps = upiAppRepository.findAll();
+        List<Offer> offers = offerRepository.findAll();
 
         model.addAttribute("users", users);
         model.addAttribute("alerts", alerts);
-        model.addAttribute("apps", upiAppRepository.findAll());
-        model.addAttribute("offers", offerRepository.findAll());
 
         long totalSettlements = tokens.size();
         double totalSettledAmount = tokens.stream().mapToDouble(ProcessedToken::getAmount).sum();
@@ -39,6 +41,26 @@ public class HomeController {
         model.addAttribute("totalSettledAmount", totalSettledAmount);
         model.addAttribute("totalAlerts", totalAlerts);
         model.addAttribute("amountFlagged", amountFlagged);
+
+        Map<String, Long> alertMethodCounts = new HashMap<>();
+        for (Alert a : alerts) {
+            alertMethodCounts.merge(a.getMethod(), 1L, Long::sum);
+        }
+        model.addAttribute("alertMethodCounts", alertMethodCounts);
+
+        Map<String, Long> appOfferCounts = new HashMap<>();
+        for (UPIApp app : apps) {
+            appOfferCounts.put(app.getName(), 0L);
+        }
+        for (Offer o : offers) {
+            for (UPIApp app : apps) {
+                if (app.getId().equals(o.getAppId())) {
+                    appOfferCounts.merge(app.getName(), 1L, Long::sum);
+                    break;
+                }
+            }
+        }
+        model.addAttribute("appOfferCounts", appOfferCounts);
 
         return "index";
     }

@@ -106,11 +106,15 @@ public class PaymentIntelligenceService {
             alert.setAnomalyScore(((Number) anomaly.get("score")).intValue());
             alert.setSeverity((String) anomaly.get("severity"));
             alert.setDeviation((String) anomaly.get("deviation"));
+            alert.setIqrOutlier((Boolean) anomaly.get("iqrOutlier"));
+            alert.setIqrNote((String) anomaly.get("iqrNote"));
             alertRepository.save(alert);
 
             result.put("anomalyScore", anomaly.get("score"));
             result.put("severity", anomaly.get("severity"));
             result.put("deviation", anomaly.get("deviation"));
+            result.put("iqrOutlier", anomaly.get("iqrOutlier"));
+            result.put("iqrNote", anomaly.get("iqrNote"));
         }
 
         return result;

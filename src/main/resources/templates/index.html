@@ -1,66 +1,69 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>SmartPay Dashboard</title>
+    <title>SmartPay — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/styles.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-light">
-<nav class="navbar navbar-dark bg-primary">
+<body>
+<nav class="navbar navbar-dark navbar-sp">
     <div class="container">
         <a class="navbar-brand" href="/">💰 SmartPay</a>
-        <div>
-            <a href="/" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
-            <a href="/compare" class="btn btn-outline-light btn-sm me-2">Fee Compare</a>
-            <a href="/compare-apps" class="btn btn-outline-light btn-sm me-2">App Compare</a>
-            <a href="/token" class="btn btn-outline-light btn-sm me-2">Tokens</a>
-            <a href="/history" class="btn btn-outline-light btn-sm me-2">History</a>
-            <a href="/offline-queue" class="btn btn-outline-light btn-sm me-2">Offline</a>
-            <a href="/optimizer" class="btn btn-outline-light btn-sm">Optimizer</a>
+        <div class="d-flex align-items-center">
+            <a href="/" class="btn btn-nav me-2">Dashboard</a>
+            <a href="/compare" class="btn btn-nav me-2">Fee Compare</a>
+            <a href="/compare-apps" class="btn btn-nav me-2">App Compare</a>
+            <a href="/token" class="btn btn-nav me-2">Tokens</a>
+            <a href="/history" class="btn btn-nav me-2">History</a>
+            <a href="/offline-queue" class="btn btn-nav me-2">Offline</a>
+            <a href="/optimizer" class="btn btn-nav me-3">Optimizer</a>
+            <span class="text-white me-2" style="font-size: 0.85rem;">
+                    Hi, <strong sec:authentication="name">user</strong>
+                </span>
+            <form method="post" action="/logout" class="d-inline">
+                <button type="submit" class="btn btn-nav">Logout</button>
+            </form>
         </div>
     </div>
 </nav>
 
 <div class="container mt-4">
-    <h2 class="mb-3">Dashboard Metrics</h2>
+    <h2 class="mb-3">Dashboard</h2>
 
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h6 class="card-title">Total Settlements</h6>
-                    <h3 class="mb-0" th:text="${totalSettlements}">0</h3>
-                </div>
+            <div class="metric-card metric-primary mb-3">
+                <h6>Total Settlements</h6>
+                <h3 th:text="${totalSettlements}">0</h3>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h6 class="card-title">Total Settled Amount</h6>
-                    <h3 class="mb-0">₹<span th:text="${totalSettledAmount}">0</span></h3>
-                </div>
+            <div class="metric-card metric-success mb-3">
+                <h6>Total Settled Amount</h6>
+                <h3>₹<span th:text="${totalSettledAmount}">0</span></h3>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
-                    <h6 class="card-title">Alerts Triggered</h6>
-                    <h3 class="mb-0" th:text="${totalAlerts}">0</h3>
-                </div>
+            <div class="metric-card metric-warning mb-3">
+                <h6>Alerts Triggered</h6>
+                <h3 th:text="${totalAlerts}">0</h3>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white bg-danger mb-3">
-                <div class="card-body">
-                    <h6 class="card-title">Amount Flagged</h6>
-                    <h3 class="mb-0">₹<span th:text="${amountFlagged}">0</span></h3>
-                </div>
+            <div class="metric-card metric-danger mb-3">
+                <h6>Amount Flagged</h6>
+                <h3>₹<span th:text="${amountFlagged}">0</span></h3>
             </div>
         </div>
     </div>
 
-    <h2 class="mb-3">Users &amp; Balances</h2>
+    <h5 class="mb-3">Users &amp; Balances</h5>
 
     <div class="card mb-4">
         <div class="card-body">
@@ -83,23 +86,26 @@
         </div>
     </div>
 
-    <h2 class="mb-3">📊 Analytics</h2>
+    <h5 class="mb-3">Analytics</h5>
 
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">Alerts by Payment Method</h5>
+                    <h5 class="mb-0" style="font-size: 0.95rem;">Alerts by Payment Method</h5>
                 </div>
                 <div class="card-body">
                     <canvas id="alertsChart" height="200"></canvas>
+                    <p id="alertsEmpty" class="text-muted text-center mt-3 mb-0" style="display:none;">
+                        No alerts yet.
+                    </p>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">Offers per UPI App</h5>
+                    <h5 class="mb-0" style="font-size: 0.95rem;">Offers per UPI App</h5>
                 </div>
                 <div class="card-body">
                     <canvas id="offersChart" height="200"></canvas>
@@ -108,7 +114,7 @@
         </div>
     </div>
 
-    <h2 class="mb-3">⚠️ Overcharge Alerts</h2>
+    <h5 class="mb-3">Overcharge Alerts</h5>
 
     <div class="card mb-4">
         <div class="card-body">
@@ -119,18 +125,17 @@
                 <thead>
                 <tr>
                     <th>Method</th>
-                    <th class="text-end">Amount</th>
                     <th class="text-end">Extra</th>
-                    <th class="text-center">Anomaly Score</th>
+                    <th class="text-center">Anomaly</th>
                     <th class="text-center">Severity</th>
                     <th class="text-center">Deviation</th>
+                    <th class="text-center">IQR</th>
                     <th>Why Flagged</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="alert : ${alerts}">
                     <td th:text="${alert.method}">UPI</td>
-                    <td class="text-end" th:text="${alert.amount}">0</td>
                     <td class="text-end text-danger fw-bold" th:text="${alert.extraCharged}">0</td>
                     <td class="text-center">
                         <span class="fw-bold" th:text="${alert.anomalyScore} + '%'">0%</span>
@@ -142,6 +147,10 @@
                     </td>
                     <td class="text-center">
                         <small th:text="${alert.deviation}">N/A</small>
+                    </td>
+                    <td class="text-center">
+                        <span th:if="${alert.iqrOutlier}" class="badge bg-danger">Outlier</span>
+                        <span th:if="${!alert.iqrOutlier}" class="badge bg-secondary">Normal</span>
                     </td>
                     <td>
                         <ul class="mb-0 ps-3">
@@ -159,43 +168,43 @@
 </div>
 
 <script th:inline="javascript">
-    const alerts = /*[[${alerts}]]*/ [];
-    const apps = /*[[${apps}]]*/ [];
-    const offers = /*[[${offers}]]*/ [];
+    // Pre-computed Maps — no LocalDateTime serialization issues
+    const alertMethodCounts = /*[[${alertMethodCounts}]]*/ {};
+    const appOfferCounts = /*[[${appOfferCounts}]]*/ {};
 
-    const methodCounts = {};
-    alerts.forEach(a => { methodCounts[a.method] = (methodCounts[a.method] || 0) + 1; });
-    const alertLabels = Object.keys(methodCounts);
-    const alertData = Object.values(methodCounts);
+    // ---- Chart 1: Alerts by Method (doughnut) ----
+    const alertLabels = Object.keys(alertMethodCounts);
+    const alertData = Object.values(alertMethodCounts);
 
     if (alertLabels.length > 0) {
         new Chart(document.getElementById('alertsChart'), {
-            type: 'pie',
+            type: 'doughnut',
             data: {
                 labels: alertLabels,
                 datasets: [{
                     data: alertData,
-                    backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6f42c1']
+                    backgroundColor: ['#1e3a8a', '#10b981', '#f59e0b', '#dc2626', '#6f42c1']
                 }]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom' } }
             }
         });
+    } else {
+        document.getElementById('alertsChart').style.display = 'none';
+        document.getElementById('alertsEmpty').style.display = 'block';
     }
 
-    const appOffers = {};
-    apps.forEach(app => { appOffers[app.name] = 0; });
-    offers.forEach(o => {
-        const app = apps.find(a => a.id === o.appId);
-        if (app) appOffers[app.name] = (appOffers[app.name] || 0) + 1;
-    });
-
+    // ---- Chart 2: Offers per App (bar) ----
     new Chart(document.getElementById('offersChart'), {
         type: 'bar',
         data: {
-            labels: Object.keys(appOffers),
+            labels: Object.keys(appOfferCounts),
             datasets: [{
                 label: 'Active Offers',
-                data: Object.values(appOffers),
-                backgroundColor: '#0d6efd'
+                data: Object.values(appOfferCounts),
+                backgroundColor: '#1e3a8a',
+                borderRadius: 6
             }]
         },
         options: {

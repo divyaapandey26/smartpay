@@ -8,6 +8,6 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String sayHello() {
-        return "SmartPay backend is officially alive!";
+        return "SmartPay backend is alive!";
     }
 }
